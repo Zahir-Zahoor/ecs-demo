@@ -1,4 +1,10 @@
 version: 0.2
+env:
+  variables:
+    AWS_ACCOUNT_ID: "448397505685"   # Replace with your AWS account ID
+    AWS_DEFAULT_REGION: "us-east-1" # Replace with your region
+    IMAGE_REPO_NAME: "nginx-application-repository"
+    IMAGE_TAG: "latest"
 
 phases:
   pre_build:
