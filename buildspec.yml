@@ -5,21 +5,24 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - ACCOUNT_ID=$(aws sts get-caller-identity --query account --output text)
-      - REGION=$(aws configure get region)
-      - REPOSITORY_NAME=nginx-application-repository   # your ECR repo name
+      - REGION=$AWS_DEFAULT_REGION
+      - REPOSITORY_NAME=nginx-application-repository   # <-- change to your ECR repo name
       - IMAGE_TAG=$(date +%Y%m%d%H%M%S)
       - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+
   build:
     commands:
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_NAME:$IMAGE_TAG .
       - docker tag $REPOSITORY_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
+
   post_build:
     commands:
       - echo Pushing the Docker image to Amazon ECR...
       - docker push $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG
-      - echo Creating imagedefinitions.json...
+      - echo Creating imagedefinitions.json file for ECS...
       - printf '[{"name":"nginx-container","imageUri":"%s"}]' $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPOSITORY_NAME:$IMAGE_TAG > imagedefinitions.json
+
 artifacts:
   files:
     - imagedefinitions.json
