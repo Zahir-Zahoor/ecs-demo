@@ -1,11 +1,11 @@
-# Use the official Nginx image from AWS Public ECR as base
+# Use Nginx from AWS Public ECR
 FROM public.ecr.aws/nginx/nginx:alpine
 
-# Remove the default nginx index page
+# Remove default Nginx index page
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy your custom website files to the container
-COPY ./html /usr/share/nginx/html
+# Copy index.html into container
+COPY ./index.html /usr/share/nginx/html/index.html
 
 # Expose port 80
 EXPOSE 80
